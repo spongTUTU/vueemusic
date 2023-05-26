@@ -11,9 +11,9 @@ export function getBanner(type=0){
 // export default {getBanner};
 
 //封装获取歌单列表的api 调用例子：/personalized?limit=${limit}`
-export function getMlist(limit=0){
+export function getMusic(limit=10){
     return axios.get(`${baseurl}/personalized?limit=${limit}`);
 }
 
 //对外抛出
-export default {getBanner,getMlist};
+export default {getBanner,getMusic};

@@ -1,115 +1,129 @@
 <template>
-    <div class="icon2">
-        <!-- music列表musiclist -->
-        <div class="icon2-top">
-            <div class="icon2-top-left">
-                发现好歌单
-            </div>
-            <router-link to="/gedan" class="icon2-top-right">
-                <button>查看更多</button>
-            </router-link>
-            <router-view></router-view>
+    <div class="musicList">
+        <div class="musicList-top">
+            <div class="title">发现好歌单</div>
+            <div class="more">查看更多</div>
         </div>
-        <div class="icon2-bottom">
-            <div class="icon2-2" v-for="(item, index) in arr2" :key="index">
-                <div class="icon2-top2" style="position:relative;">
-                    <img :src="item.picUrl" />
-                    <div class="tet" style="position: absolute;top:0;right:0;color: white;font-size: 0.28rem;margin-right: 10px;margin-top: 10px;">
-                        ▶️{{item.trackCount}}万
+        <div class="mlist">
+            <div class="swiper-container" id="musicSwiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide" v-for="item in musicls.musics" :key="item.id">
+                        <img :src="item.picUrl" alt="">
+                        <div class="name">
+                            {{item.name}}
+                        </div>
+                        <div class="count">
+                            <svg class="icon" aria-hidden="true">
+                                <use xlink:href="#icon-fanjutuijian"></use>
+                            </svg>
+                            <span>
+                                {{changeValue(item.playCount)}}
+                            </span>
+                        </div>
                     </div>
-                </div>
-                <div class="icon2-bottom2">
-                    {{ item.name }}
                 </div>
             </div>
         </div>
     </div>
 </template>
+
 <script>
-import {getMlist} from "@/api/index.js"
-export default {
-    name: "musiclist",
-    data() {
-        return {
-            arr2:[
-                {picUrl:"https://www.yxsx.cn/uploadfile/202207/b85d96c7abee0a5.jpg",name:"不要轻信视频中的广告，谨防上当受骗! 如果无",trackCount:1},
-                {picUrl:"https://img.zcool.cn/community/01b48c6052b9b411013fb117fd75c0.jpg@2o.jpg",name:"不要轻信视频中的广告，谨防上当受骗! 如果无",trackCount:1},
-                {picUrl:"https://img.phb123.com/uploads/allimg/210309/58-210309162S0-51.png",name:"不要轻信视频中的广告，谨防上当受骗! 如果无",trackCount:2}
-            ]
+import "swiper/css/swiper.css"
+import Swiper from "swiper"
+import { onMounted, onUpdated, reactive } from "vue"
+import {getMusic} from "@/api/index.js"
+export default{
+    name:'musiclist',
+    setup(){
+        const musicls=reactive({musics:[]});//每一个歌单
+         onMounted(async()=>{ //iew与model绑定成功之后
+            var res=await getMusic(10);
+            musicls.musics=res.data.result;
+            console.log(res);
+        })
+        onUpdated(()=>{
+            var swiper = new Swiper("#musicSwiper",{
+                slidesPerView:3,  //一屏显示几个滑块
+                spaceBetween:10  //每个滑块之间的间距
+            })
+        })
+        function changeValue(num){//格式化播放量
+            var res=0;
+            if(num>=100000000){
+                res=num/100000000;
+                res=res.toFixed(2)+"亿";//toFixed(2)截取小数点后两位
+            }else if(num>=10000){
+                res=num/10000;
+                res=res.toFixed(2)+"万"
+            }else {
+                res=num;
+            }
+            return res;
         }
-    },
-    async mounted(){ //async...await 异步ajax请求函数 //替换假数据
-        var res=await getMlist(100);
-        // this.arr2=res.data.result;
-        // this.arr2[0]=res.data.result[0];
-        for(var i=0;i<3;i++){
-            this.arr2[i]=res.data.result[i];
-        }
-        console.log(res);
+        return {musicls,changeValue}
     }
 }
 </script>
-<style lang="less">
-.icon2{
-    margin-top: 30px;
-    width: 98%;
-    margin: 0 auto;
-    height: 220px;
-    display: flex;
-    flex-direction: column;
-    align-items:center;
-    justify-content: space-between;
 
-    .icon2-top{
-    width:98%;
-    height: 35px;
-    display: flex;
-    justify-content: space-between;
+
+<style lang="less" scoped>
+.musicList{
+    width: 7.5rem;
+    padding: 0 0.4rem;
+    .musicList-top{
+        display: flex;
+        justify-content: space-between;
+        height: 1rem;
+        align-items: center;
+        .title{
+            font-size: 0.4rem;
+            font-weight: 900;
+        }
+        .more{
+            border: 1px solid #ccc;
+            border-radius: 0.2rem;
+            font-size: 0.24rem;
+            height: 0.5rem;
+            width: 1.2rem;
+            text-align: center;
+            line-height: 0.5rem;
+        }
     }
-    .icon2-top-left{
-    width: 30%;
-    height: 35px;
-    line-height: 35px;
-    font-size: 20px;
-    font-weight: bold;
-    }
-    .icon2-top-right{
-    width: 25%;
-    height: 35px;
-    line-height: 35px;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    }
-    .icon2-bottom{
-    width: 100%;
-    height: 175px;
-    display: flex;
-    justify-content: space-around;
-    }
-    .icon2-2{
-    width:30%;
-    height:175px;
-    }
-    .icon2-top2{
-    width:100%;
-    height:120px;
-    border-radius: 10px;
-    }
-    .icon2-bottom2{
-    margin-top: 10px;
-    width:100%;
-    height:40px;
-    font-size: 12px;
-    color: #999;
-    }
-    img{
-    width: 100%;
-    height: 100%;
-    border-radius: 8px;
-    /* object-fit: cover;
-    object-position: 50% 20%; */
+    .mlist{
+        .swiper-container{
+            width: 100%;
+            height: 3rem;
+            .swiper-slide{
+                
+                display: flex;
+                flex-direction: column;
+                position: relative;
+                img{
+                    width:100%;
+                    height: auto;
+                    border-radius: 0.1rem;
+                }
+                .name{
+                    height: 0.6rem;
+                    width: 100%;
+                    font-size: 0.24rem;
+                    line-height: 0.4rem;
+                }
+                .count{
+                    position:absolute;
+                    right: 0.1rem;
+                    top: 0.1rem;
+                    font-size: 0.24rem;
+                    color: #ccc;
+                    display: flex;
+                    align-items: center;
+                    .icon{
+                         fill: #ccc;
+                    }
+                }
+            }
+        }
     }
 }
 </style>
+

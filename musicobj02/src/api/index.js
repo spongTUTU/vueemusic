@@ -8,4 +8,12 @@ export function getBanner(type=0){
 }
 
 //对外抛出
-export default {getBanner};
+// export default {getBanner};
+
+//封装获取歌单列表的api 调用例子：/personalized?limit=${limit}`
+export function getMlist(limit=0){
+    return axios.get(`${baseurl}/personalized?limit=${limit}`);
+}
+
+//对外抛出
+export default {getBanner,getMlist};

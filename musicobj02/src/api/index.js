@@ -15,5 +15,9 @@ export function getMusic(limit=10){
     return axios.get(`${baseurl}/personalized?limit=${limit}`);
 }
 
+
+export function getMusiclist(id){
+    return axios.get(`${baseurl}/playlist/detail?id=${id}`);
+}
 //对外抛出
-export default {getBanner,getMusic};
+export default {getBanner,getMusic,getMusiclist};

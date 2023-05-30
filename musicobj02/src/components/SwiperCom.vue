@@ -4,7 +4,7 @@
         <div class="swiper-container" id="swiperIndex">
             <!-- 加载图片 -->
             <div class="swiper-wrapper">
-                <div class="swiper-slide" v-for="(item,index) in imgs" :key="index">
+                <div class="swiper-slide" v-for="(item,index) in imgs.imges" :key="index">
                     <img :src="item.pic" alt="" >
                 </div>    
             </div>
@@ -18,35 +18,30 @@ import "swiper/css/swiper.css"
 import Swiper from "swiper"
 // @指的是项目目录 src
 import {getBanner} from "@/api/index.js"
+import { onMounted , onUpdated, reactive} from "vue"
 export default{
     name:"swipercom",
-    data(){
-        return{
-            imgs:[ //轮播图数据
-                {pic:require("../assets/logo.png")},
-                {pic:require("../assets/logo.png")},
-                {pic:require("../assets/logo.png")},
-                {pic:require("../assets/logo.png")},
-                {pic:require("../assets/logo.png")},
-                {pic:require("../assets/logo.png")},
-                {pic:require("../assets/logo.png")}
-            ]
-        }
-    },
-    async mounted(){ //async...await 异步ajax请求函数 //替换假数据
-        var res=await getBanner(1);
-        this.imgs=res.data.banners;
-        console.log(res);
-        var myswiper=new Swiper("#swiperIndex",{
+    setup(){
+        const imgs=reactive({
+            imges:[]
+        })
+         onMounted(async()=>{ //iew与model绑定成功之后
+            var res=await getBanner(1);
+            imgs.imges=res.data.banners;
+            console.log(res);
+        })
+        onUpdated(()=>{
+            var myswiper=new Swiper("#swiperIndex",{
             //autoplay:true,//自动播放
-            //loop:true //循环模式
+            loop:true,//循环模式
             //分页器
             pagination:{
                 el:".swiper-pagination",
                 clickable:true//分页小圆点可以点击
             }
         })
-        
+        })
+        return {imgs}
     }
 }
 </script>

@@ -22,7 +22,12 @@ export default createStore({
   mutations: { 
     setPlayList(state,value){//定义一个函数用来修改state中播放列表的数据
       state.playlist=value;
-    }
+    },
+    // value---当前歌曲下标
+    setPlayIndex(state,value){//定义一个函数用来修改state中正在播放歌曲播放的下标
+      state.playCurrentIndex=value;
+    },
+    
   },
   actions: {
   },

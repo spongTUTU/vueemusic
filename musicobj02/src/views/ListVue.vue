@@ -12,6 +12,7 @@ import { useRoute } from 'vue-router';
 import { getMusiclist } from "@/api/index.js" //src目录
 import listviewTop from '../components/ListViewTop.vue'
 import playList from '../components/PlayList.vue'
+import store  from '@/store/index.js';
     export default{
         name:"listview",
         setup(){
@@ -30,6 +31,9 @@ import playList from '../components/PlayList.vue'
                 console.log(res);
                 music.playlist=res.data.playlist;//2、将获取的数据放到响应式数据中
                 console.log(music.playlist);
+
+                //将当前专辑播放列表的数据传递到store中的playlist中
+                store.commit("setPlayList",music.playlist.tracks);
             })
             return { music}  
         },

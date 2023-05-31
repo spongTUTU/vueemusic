@@ -2,8 +2,8 @@
     <div class="playMusic">
         <div class="bg" :style="{backgroundImage:`url(${playDetail.al.picUrl})`}"></div>
         <div class="playTop">
-            <div class="back">
-                <svg class="icon" aria-hidden="true" @click="$emit('back')">
+            <div class="back" @click="$emit('back')">
+                <svg class="icon" aria-hidden="true">
                     <use xlink:href="#icon-sdf"></use>
                 </svg>
             </div>
@@ -16,11 +16,11 @@
                 </svg>
             </div>
         </div>
-        <div v-if="isLyric" class="playLyric" @click="isLyric = !isLyric">
-            一去二三里，烟村四五家
+        <div v-if="isLyric" class="playLyric" @click="isLyric =! isLyric">
+            {{ lyric}}
         </div>
-        <div  v-else class="playContent" @click="isLyric = !isLyric">
-            <!-- class有active小白条落下，class没有active小白条抬起 动态class，值为true才会i添加class名称 -->
+        <div  v-else class="playContent" @click="isLyric =! isLyric">
+            <!-- class有active小白条落下  class没有active小白条抬起  动态class，值为true才会添加class名称 -->
             <img class="needle" :class="{active: !abc}" src="@/assets/img/needle-ip6.png" alt="">
             <img class="disc" src="@/assets/img/disc-ip6.png" alt="">
             <img class="playImg" :src="playDetail.al.picUrl" alt="">
@@ -32,11 +32,11 @@
             <svg class="icon" aria-hidden="true" @click="tabMusic(-1)">
                 <use xlink:href="#icon-shangyishoushangyige"></use>
             </svg>
-            <svg v-if="abc" class="icon" aria-hidden="true" @click="play()">
-              <use xlink:href="#icon-bofang_huaban"></use>
+            <svg class="icon" v-if="abc" aria-hidden="true" @click="play">
+                <use xlink:href="#icon-bofang_huaban"></use>
             </svg>
-            <svg  v-else class="icon" aria-hidden="true" @click="play()">
-                <use xlink:href="#icon-iconstop"></use>
+            <svg class="icon" v-else aria-hidden="true" @click="play">
+                <use xlink:href="#icon-bofang"></use>
             </svg>
             <svg class="icon" aria-hidden="true" @click="tabMusic(+1)">
                 <use xlink:href="#icon-xiayigexiayishou"></use>
@@ -48,35 +48,36 @@
     </div>
 </template>
 <script>
-import { mapMutations,mapState } from 'vuex';
+import { mapMutations, mapState } from 'vuex';
 export default{
-    name:"playMusic",
+    name:"playmusic",
     props:["abc","play","playDetail"],
     data(){
-        return{
-            isLyric:false,//歌词与唱片的转换
+        return {
+            isLyric:false  //歌词与唱片的转换
         }
     },
     computed:{
-        ...mapState(["playlist","playCurrentIndex"])  //获取正在播放的歌曲下标
+        ...mapState(["playCurrentIndex","playlist","lyric"])  //当前播放音乐下标  当前播放音乐列表  当前播放音乐的歌词
     },
     methods:{
         tabMusic(num){
             // console.log(num);
-            var index=this.playCurrentIndex+num;//切换后的下标
-            //边界判断
-            if(index<0){ //第一首--切换到最后一首
-                index=this.playlist.length-1;
-            }else if(index=this.playlist.length){ //最后一首--切换到第一首
-                index=0;
+            var index = this.playCurrentIndex+num;  //切换后的下标
+            // 边界判断
+            if(index < 0){  //第一首  切换到最后一首
+                index = this.playlist.length-1;
+            }else if(index == this.playlist.length){  //最后一首  切换到第一首
+                index = 0;
             }
             console.log(index);
-            this.setPlayIndex(index);//修改当前播放歌曲的下标
+            this.setPlayIndex(index);  //修改当前播放歌曲的下标为切换后的下标
         },
-        ...mapMutations(["setPlayIndex"])//修改当前播放音乐下标的方法
+        ...mapMutations(["setPlayIndex"])  //修改当前播放音乐下标的方法
     }
 }
 </script>
+
 <style lang="less" scoped>
 .playMusic{
     position:fixed;

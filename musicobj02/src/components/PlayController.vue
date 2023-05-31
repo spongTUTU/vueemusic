@@ -1,9 +1,9 @@
 <template>
     <div class="playController">
         <div class="left">
-            <img :src="playlist[playCurrentIndex].al.picUrl" alt="" @click="show = !show">
+            <img :src="playlist[playCurrentIndex].al.picUrl" alt="" @click="show=!show">
             <div class="content">
-                <div class="title">{{playlist[playCurrentIndex].name}}</div>
+                <div class="title">{{ playlist[playCurrentIndex].name }}</div>
                 <div class="tips">横滑可以切换上下首哦</div>
             </div>
         </div>
@@ -11,48 +11,60 @@
             <svg v-if="abc" class="icon" aria-hidden="true" @click="play">
                 <use xlink:href="#icon-bofang1"></use>
             </svg>
-            <svg v-else class="icon" aria-hidden="true" @click="play" >
-            one;">
+            <svg v-else class="icon" aria-hidden="true" @click="play">
                 <use xlink:href="#icon-iconstop"></use>
             </svg>
             <svg class="icon" aria-hidden="true">
                 <use xlink:href="#icon-liebiao1"></use>
             </svg>
         </div>
-        <!-- 歌曲播放详情页面 -->
-        <play-music v-show="show" :abc="abc" :play="play" :playDetail="playlist[playCurrentIndex]"  @back="show = !show"></play-music>
+        
+        <!-- 歌曲详情页面 -->
+        <play-music v-show="show" :abc="abc" :play="play" :playDetail="playlist[playCurrentIndex]" @back="show=!show"></play-music>
         <!-- 如何获取播放歌曲的MP3地址  https://music.163.com/song/media/outer/url?id=歌曲id.mp3 -->
         <!-- controls audio标签属性，一般不显示 -->
-        <!-- audio play()播放 pause()暂停 paused查看当前歌曲是否处于暂停状态-->
-        <audio  ref="audio" :src=" `https://music.163.com/song/media/outer/url?id=${playlist[playCurrentIndex].id}.mp3` "></audio>
+        <!-- audio  play()播放音乐  pause()暂停音乐  pused()当前歌曲是否处于暂停状态 -->
+        <audio ref="audio" :src=" `https://music.163.com/song/media/outer/url?id=${playlist[playCurrentIndex].id}.mp3` "></audio>
     </div>
 </template>
 <script>
 import { mapState } from 'vuex';
-import playMusic from './PlayMusic.vue';
+import playMusic from "@/components/PlayMusic.vue"
+import { getLyric } from "@/api/index.js"
+import store from '@/store/index.js';
 export default{
     name:"playcontroller",
     data(){
-        return{
-            abc:true, //当前音乐是否处于暂停状态
-            show:false //歌曲详情是否显示
+        return {
+            abc:true,  //当前音乐是否处于暂停状态
+            show:false  //歌曲详情是否显示
         }
     },
     components:{
         playMusic
+    },
+    async mounted(){  //view与model绑定成功之后
+        var res = await getLyric(this.playlist[this.playCurrentIndex].id);
+        // console.log(res.data.lrc.lyric);
+        store.commit("setLyric",res.data.lrc.lyric);  //修改状态管理库中的歌词数据
+    },
+    async updated(){  //view与model数据更新之后
+        var res = await getLyric(this.playlist[this.playCurrentIndex].id);
+        // console.log(res);
+        store.commit("setLyric",res.data.lrc.lyric);  //修改状态管理库中的歌词数据
     },
     computed:{
         ...mapState(["playlist","playCurrentIndex"])  //获取正在播放博取列表，以及正在播放歌曲下标
     },
     methods:{
         play(){
-            if(this.$refs.audio.paused){//当前audio处于暂停状态
-                 //this.$refs.audio 获取audio标签
+            if(this.$refs.audio.paused){  //当前audio处于暂停状态
+                // this.$refs.audio 获取audio标签
                 this.$refs.audio.play();
-                this.abc=false;
-            }else{//当前audio处于播放状态
+                this.abc = false;
+            }else{  //当前audio处于播放状态
                 this.$refs.audio.pause();
-                this.abc=true;
+                this.abc = true;
             }
         }
     }

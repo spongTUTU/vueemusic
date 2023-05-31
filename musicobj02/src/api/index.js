@@ -15,9 +15,17 @@ export function getMusic(limit=10){
     return axios.get(`${baseurl}/personalized?limit=${limit}`);
 }
 
-
+// 歌单详情
 export function getMusiclist(id){
     return axios.get(`${baseurl}/playlist/detail?id=${id}`);
 }
+// 封装获取歌词api
+export function getLyric(id){
+    return axios.get(`${baseurl}/lyric?id=${id}`);
+}
+//搜索接口
+export function searchMusic(keywords){
+    return axios.get(`${baseurl}/search?keywords=${keywords}`);
+}
 //对外抛出
-export default {getBanner,getMusic,getMusiclist};
+export default {getBanner,getMusic,getMusiclist,getLyric,searchMusic};
